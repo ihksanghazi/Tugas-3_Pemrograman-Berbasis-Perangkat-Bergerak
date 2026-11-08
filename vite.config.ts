@@ -11,6 +11,15 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  server: {
+    proxy: {
+      '/api-coin': {
+        target: 'https://api.coinlore.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api-coin/, ''),
+      },
+    }
+  },
   test: {
     globals: true,
     environment: 'jsdom',

@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-title>Blank</ion-title>
+        <ion-title>Daftar Crypto</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -14,13 +14,27 @@
       </ion-header>
 
       <div id="container">
-        <strong>Ready to create an app?</strong>
-        <p>
-          Start with Ionic
-          <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components"
-            >UI Components</a
-          >
-        </p>
+
+        <ion-button @click="getDataCoin" id="button">Get Data</ion-button>
+
+        <table border="1">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Number</th>
+              <th>Symbol</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="coin in coins" :key="coin.id" id="coin-row">
+              <td>{{ coin.rank }}</td>
+              <td>{{ coin.name }}</td>
+              <td>{{ coin.symbol }}</td>
+              <td>{{ coin.price_usd }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </ion-content>
   </ion-page>
@@ -28,34 +42,47 @@
 
 <script setup lang="ts">
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import { ref } from 'vue'
+import { CoinApiResponse, CoinType } from '@/types/cointType';
+
+const coins = ref<CoinType[]>([])
+
+async function getDataCoin(){
+  try {
+    const response = await fetch('/api-coin/api/tickers/')
+    const data: CoinApiResponse = await response.json()
+    console.log(data.data)
+    coins.value = data.data
+  } catch (error) {
+    console.error('Error fetching data:', error)
+  }
+
+}
+
+
 </script>
 
 <style scoped>
 #container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+}
+
+#button{
+  margin-bottom: 20px;
+  align-self: center;
+}
+
+#coin-row {
   text-align: center;
+  transition: background-color 0.3s;
 
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+#coin-row:hover {
+  background-color: #f0f0f0;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
-}
 </style>
